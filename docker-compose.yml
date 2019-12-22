@@ -1,0 +1,10 @@
+version: '3.3'
+services:
+    php5laravel:
+        container_name: app1
+        restart: always
+        ports:
+            - '81:80'
+        volumes:
+            - '/home/tony/app1:/var/www/html'
+        image: 'php5laravel:latest'

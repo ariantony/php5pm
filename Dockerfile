@@ -26,6 +26,7 @@ RUN apt-get update && apt-get install -yq --no-install-recommends \
     php-imagick \
     php-bcmath \
     # Install tools
+    RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
     nano \
     supervisor \
     mysql-client \
@@ -34,6 +35,7 @@ RUN apt-get update && apt-get install -yq --no-install-recommends \
     ca-certificates \
     proftpd \
     cron \
+    tzdata \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /etc/supervisor/conf.d/
 RUN sed -i "s|# DefaultRoot|DefaultRoot |g" /etc/proftpd/proftpd.conf
@@ -43,8 +45,7 @@ ADD 000-default.conf /etc/apache2/sites-available/
 RUN a2ensite 000-default
 COPY ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-RUN echo "Asia/Jakarta" > /etc/timezone
-RUN dpkg-reconfigure --frontend noninteractive tzdata
+RUN ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime && dpkg-reconfigure -f noninteractive tzdata
 
 EXPOSE 80 443 22 21
 WORKDIR /var/www/html/public
